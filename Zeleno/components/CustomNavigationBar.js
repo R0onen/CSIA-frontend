@@ -30,6 +30,10 @@ const CustomNavigationBar = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    position: 'absolute', // Position the navigation bar at the bottom
+    bottom: 15, // Stick to the bottom
+    left: 0,
+    right: 0, // Full width
     flexDirection: 'row',
     justifyContent: 'space-between', // Distribute icons evenly
     alignItems: 'center',
@@ -41,7 +45,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     alignItems: 'center',
-    paddingHorizontal: 30, // Add some padding for better alignment
+    paddingHorizontal: 35, // Add some padding for better alignment
   },
   label: {
     fontSize: 16,
@@ -50,12 +54,16 @@ const styles = StyleSheet.create({
     color: '#DF6D14', // Color for "Journal"
   },
   fab: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 95,
+    height: 95,
+    borderRadius: 50,
     backgroundColor: '#DF6D14',
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'absolute', // Position the FAB absolutely
+    top: -30, // Adjust the top position as needed
+    left: '50%', // Center the FAB horizontally
+    transform: [{ translateX: -30 }], // Fine-tune horizontal centering
   },
 });
 

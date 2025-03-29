@@ -1,6 +1,6 @@
-// screens/CreateNewBatchScreen.js
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'; // Ensure correct import
 
 const CreateNewBatchScreen = ({ navigation }) => {
   return (
@@ -42,9 +42,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F5E9',
     padding: 16,
-  },
-  header: {
-    marginBottom: 32,
+    paddingTop: '20%', // Add padding to move the header down
   },
   title: {
     fontSize: 24,
@@ -58,29 +56,36 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'center', // Align options to the center vertically
+    alignItems: 'center', // Center horizontally
+    flexDirection: 'column', // Stack options vertically
+    marginTop: 32, // Add some space after the header
   },
   option: {
-    backgroundColor: '#FDEBD0',
+    backgroundColor: '#DF6D14', // Set the background color
     borderRadius: 8,
     padding: 24,
-    marginBottom: 16,
+    marginBottom: 100, // Reduced from 32 to 16 to shrink the gap
+    width: '80%', // Reduce width to center the boxes
+    height: '25%', // Set a fixed height for the option boxes
+    justifyContent: 'center', // Center content vertically
+    alignItems: 'center', // Center content horizontally
   },
   optionTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#DF6D14',
+    color: '#FFFFFF', // Text color for title
     textAlign: 'center',
   },
   optionDescription: {
     fontSize: 16,
-    color: '#DF6D14',
+    color: '#FFFFFF', // Text color for description
     textAlign: 'center',
     marginTop: 8,
   },
   cancelButton: {
     position: 'absolute',
-    bottom: 16,
+    bottom: 50,
     left: 16,
     flexDirection: 'row',
     alignItems: 'center',
@@ -89,6 +94,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 24,
     padding: 8,
+    flexDirection: 'row', // Align arrow and text horizontally
+    alignItems: 'center',
   },
   cancelText: {
     marginLeft: 8,
