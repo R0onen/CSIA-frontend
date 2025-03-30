@@ -1,44 +1,57 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const BatchConfirmationScreen = ({ route, navigation }) => {
-  const { plantName, plantDescription, sowingDate, harvestDate, substrateType, selectedImage } = route.params;
+  const { plantName, plantDescription, sowingDate, harvestDate, substrateType } = route.params;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.timeStamp}>12:07</Text>
-      <Text style={styles.successMessage}>Batch has been created successfully!</Text>
+      {/* Success Message */}
+      <Text style={styles.successMessage}>Batch has created successfully!</Text>
 
+      {/* Card Section */}
       <View style={styles.card}>
-        <View style={styles.cardContent}>
-          <Text style={styles.plantName}>{plantName}</Text>
-          <Text style={styles.plantDescription}>{plantDescription}</Text>
-        </View>
-        <Image
-          source={{ uri: selectedImage || 'https://source.unsplash.com/random/100x100/?arugula' }}
-          style={styles.plantImage}
-        />
+        {/* Top Row: Plant Name, Description, and Icon */}
+        <View style={styles.topRow}>
+          {/* Left Column: Plant Name and Description */}
+          <View style={styles.leftColumn}>
+            <Text style={styles.plantName}>{plantName}</Text>
+            <Text style={styles.plantDescription}>{plantDescription}</Text>
+          </View>
 
-        <View style={styles.detailsContainer}>
-          <Text style={styles.detailLabel}>Sowing Date:</Text>
-          <Text style={styles.detailValue}>{sowingDate}</Text>
+          {/* Right Column: Plant Icon */}
+          <View style={styles.plantIconContainer}>
+            <MaterialCommunityIcons name="leaf" size={50} color="#4CAF50" />
+          </View>
         </View>
+
+        {/* Details Section */}
         <View style={styles.detailsContainer}>
-          <Text style={styles.detailLabel}>Substrate:</Text>
-          <Text style={styles.detailValue}>{substrateType}</Text>
-        </View>
-        <View style={styles.detailsContainer}>
-          <Text style={styles.detailLabel}>Harvest Date:</Text>
-          <Text style={styles.detailValue}>{harvestDate}</Text>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Sowing Date:</Text>
+            <Text style={styles.detailValue}>{sowingDate}</Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Substrate:</Text>
+            <Text style={styles.detailValue}>{substrateType}</Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Harvest Date:</Text>
+            <Text style={styles.detailValue}>{harvestDate}</Text>
+          </View>
         </View>
       </View>
 
+      {/* Buttons Section */}
       <View style={styles.buttonContainer}>
+        {/* Go to Journal Button */}
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Journal')}>
           <MaterialCommunityIcons name="notebook" size={24} color="#FFFFFF" />
           <Text style={styles.buttonText}>Go to Journal</Text>
         </TouchableOpacity>
+
+        {/* Add Batch Button */}
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ManualCreate')}>
           <MaterialCommunityIcons name="plus" size={24} color="#FFFFFF" />
           <Text style={styles.buttonText}>Add batch</Text>
@@ -49,22 +62,19 @@ const BatchConfirmationScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8F5E9',
-    padding: 16,
-  },
-  timeStamp: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#DF6D14',
-    marginTop: 32,
-  },
+    container: {
+        flex: 1,
+        backgroundColor: '#F8F5E9',
+        padding: 16,
+        alignItems: 'center',
+        justifyContent: 'flex-start', // Start from the top
+        paddingTop: '20%', // Adjust this percentage to control height placement
+    },    
   successMessage: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#DF6D14',
-    marginTop: 32,
+    marginTop: 64, // Increased margin to move it further down
     textAlign: 'center',
   },
   card: {
@@ -72,10 +82,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     marginTop: 32,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    width: '100%',
+    alignItems: 'center', // Center content horizontally
   },
-  cardContent: {
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16, // Add spacing between the top row and details
+    width: '100%',
+    justifyContent: 'space-between', // Space out name/description and icon
+  },
+  leftColumn: {
     flex: 1,
   },
   plantName: {
@@ -88,15 +105,23 @@ const styles = StyleSheet.create({
     color: '#DF6D14',
     marginTop: 8,
   },
-  plantImage: {
+  plantIconContainer: {
     width: 100,
     height: 100,
     borderRadius: 8,
+    borderColor: '#000', // Optional: Add border for better visibility
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   detailsContainer: {
+    alignSelf: 'center', // Center the details horizontally
+    marginTop: 16, // Add spacing between the icon and details
+  },
+  detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 16,
+    marginBottom: 15, // Add spacing between rows
   },
   detailLabel: {
     fontSize: 16,
@@ -109,8 +134,11 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    gap: 16, // Space between buttons
+    justifyContent: 'space-between', // Distribute buttons with space between them
     marginTop: 32,
+    marginBottom: 16,
+    paddingHorizontal: 16, // Add horizontal padding for better spacing
   },
   button: {
     backgroundColor: '#8B4513',
