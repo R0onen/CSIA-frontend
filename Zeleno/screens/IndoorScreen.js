@@ -41,7 +41,7 @@ const IndoorScreen = ({ navigation }) => {
 
       {/* Search Bar */}
       <View style={styles.searchBarContainer}>
-        <MaterialCommunityIcons name="magnify" size={24} color="#DF6D14" />
+        <MaterialCommunityIcons name="magnify" size={28} color="#DF6D14" /> {/* Increased icon size */}
         <TextInput
           style={styles.searchInput}
           placeholder="Search..."
@@ -186,13 +186,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#FDEBD0',
     borderRadius: 8,
     paddingHorizontal: 16,
-    marginVertical: 16,
+    marginVertical: 24, // Increased vertical margin for more spacing
+    height: 56, // Increased height for a larger search bar
   },
   searchInput: {
     flex: 1,
     marginLeft: 8,
-    fontSize: 16,
+    fontSize: 18, // Increased font size
     color: '#DF6D14',
+    paddingVertical: 12, // Added vertical padding for better alignment
   },
   manualPromptContainer: {
     flexDirection: 'row',
