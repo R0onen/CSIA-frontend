@@ -66,7 +66,7 @@ const AppStack = () => (
     {/* Direct Access to Journal Screen */}
     <Stack.Screen name="Journal" component={JournalScreen} />
 
-    {/* Add PlantInfoScreen here */}
+    {/* PlantInfoScreen */}
     <Stack.Screen name="PlantInfo" component={PlantInfoScreen} />
   </Stack.Navigator>
 );
