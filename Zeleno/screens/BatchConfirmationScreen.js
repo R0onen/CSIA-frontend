@@ -46,7 +46,20 @@ const BatchConfirmationScreen = ({ route, navigation }) => {
       {/* Buttons Section */}
       <View style={styles.buttonContainer}>
         {/* Go to Journal Button */}
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Journal')}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            navigation.navigate('Journal', {
+              plantData: {
+                plantName,
+                plantDescription,
+                sowingDate,
+                harvestDate,
+                substrateType,
+              },
+            })
+          }
+        >
           <MaterialCommunityIcons name="notebook" size={24} color="#FFFFFF" />
           <Text style={styles.buttonText}>Go to Journal</Text>
         </TouchableOpacity>
@@ -62,19 +75,19 @@ const BatchConfirmationScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F8F5E9',
-        padding: 16,
-        alignItems: 'center',
-        justifyContent: 'flex-start', // Start from the top
-        paddingTop: '20%', // Adjust this percentage to control height placement
-    },    
+  container: {
+    flex: 1,
+    backgroundColor: '#F8F5E9',
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: '20%',
+  },
   successMessage: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#DF6D14',
-    marginTop: 64, // Increased margin to move it further down
+    marginTop: 64,
     textAlign: 'center',
   },
   card: {
@@ -83,14 +96,14 @@ const styles = StyleSheet.create({
     padding: 16,
     marginTop: 32,
     width: '100%',
-    alignItems: 'center', // Center content horizontally
+    alignItems: 'center',
   },
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16, // Add spacing between the top row and details
+    marginBottom: 16,
     width: '100%',
-    justifyContent: 'space-between', // Space out name/description and icon
+    justifyContent: 'space-between',
   },
   leftColumn: {
     flex: 1,
@@ -109,19 +122,19 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 8,
-    borderColor: '#000', // Optional: Add border for better visibility
+    borderColor: '#000',
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   detailsContainer: {
-    alignSelf: 'center', // Center the details horizontally
-    marginTop: 16, // Add spacing between the icon and details
+    alignSelf: 'center',
+    marginTop: 16,
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15, // Add spacing between rows
+    marginBottom: 15,
   },
   detailLabel: {
     fontSize: 16,
@@ -134,11 +147,11 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    gap: 16, // Space between buttons
-    justifyContent: 'space-between', // Distribute buttons with space between them
+    gap: 16,
+    justifyContent: 'space-between',
     marginTop: 32,
     marginBottom: 16,
-    paddingHorizontal: 16, // Add horizontal padding for better spacing
+    paddingHorizontal: 16,
   },
   button: {
     backgroundColor: '#8B4513',

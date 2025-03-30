@@ -2,56 +2,80 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const CustomNavigationBar = ({ navigation }) => {
+const CustomNavigationBar = ({ navigation, state }) => {
+  const isFocused = (routeName) => state?.routes[state.index]?.name === routeName;
+
   return (
     <View style={styles.container}>
-      {/* Journal Icon */}
-      <View style={styles.iconContainer}>
-        <MaterialCommunityIcons name="book-open-variant" size={32} color="#DF6D14" />
-        <Text style={styles.label}>Journal</Text>
-      </View>
+      {/* Journal Tab */}
+      <TouchableOpacity
+        style={styles.iconContainer}
+        onPress={() => navigation.navigate('Journal')}
+      >
+        <MaterialCommunityIcons
+          name="book-open-variant"
+          size={32}
+          color={isFocused('Journal') ? '#DF6D14' : '#A5846B'}
+        />
+        <Text style={[styles.label, isFocused('Journal') && styles.activeText]}>
+          Journal
+        </Text>
+      </TouchableOpacity>
 
       {/* Floating Action Button (FAB) */}
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => navigation.navigate('CreateNewBatch')} // Navigate to CreateNewBatchScreen
+        onPress={() => navigation.navigate('Create', { screen: 'CreateNewBatch' })}
       >
         <MaterialCommunityIcons name="plus" size={32} color="#FFFFFF" />
       </TouchableOpacity>
 
-      {/* Explore Icon */}
-      <View style={styles.iconContainer}>
-        <MaterialCommunityIcons name="earth" size={32} color="#A5846B" />
-        <Text style={styles.label}>Explore</Text>
-      </View>
+      {/* Explore Tab */}
+      <TouchableOpacity
+        style={styles.iconContainer}
+        onPress={() => navigation.navigate('Explore')}
+      >
+        <MaterialCommunityIcons
+          name="earth"
+          size={32}
+          color={isFocused('Explore') ? '#DF6D14' : '#A5846B'}
+        />
+        <Text style={[styles.label, isFocused('Explore') && styles.activeText]}>
+          Explore
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute', // Position the navigation bar at the bottom
-    bottom: 15, // Stick to the bottom
+    position: 'absolute',
+    bottom: 0,
     left: 0,
-    right: 0, // Full width
+    right: 0,
     flexDirection: 'row',
-    justifyContent: 'space-between', // Distribute icons evenly
+    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF', // Ensure white background
+    backgroundColor: '#FFFFFF',
     paddingVertical: 16,
-    paddingHorizontal: 16, // Reduce this value to bring icons closer
+    paddingHorizontal: 16,
     borderTopWidth: 1,
     borderTopColor: '#EAEAEA',
+    zIndex: 10,
   },
   iconContainer: {
     alignItems: 'center',
-    paddingHorizontal: 35, // Add some padding for better alignment
+    paddingHorizontal: 35,
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
     marginTop: 8,
-    color: '#DF6D14', // Color for "Journal"
+    color: '#A5846B',
+  },
+  activeText: {
+    color: '#DF6D14',
   },
   fab: {
     width: 95,
@@ -60,10 +84,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#DF6D14',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'absolute', // Position the FAB absolutely
-    top: -30, // Adjust the top position as needed
-    left: '50%', // Center the FAB horizontally
-    transform: [{ translateX: -30 }], // Fine-tune horizontal centering
+    position: 'absolute',
+    top: -30,
+    left: '55%',
+    transform: [{ translateX: -47.5 }],
+    zIndex: 20,
+    elevation: 4,
   },
 });
 
