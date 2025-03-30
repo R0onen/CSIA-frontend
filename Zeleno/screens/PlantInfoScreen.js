@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native'; // Import useNavigation
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 
 const PlantInfoScreen = () => {
+  const navigation = useNavigation(); // Use the useNavigation hook to get the navigation object
   const route = useRoute();
   const { plant } = route.params; // Get the plant data passed from JournalScreen
 
@@ -15,6 +16,18 @@ const PlantInfoScreen = () => {
   const [height, setHeight] = useState('');
   const [lightingNotes, setLightingNotes] = useState('');
   const [humidity, setHumidity] = useState('');
+
+  // Function to save the observation entry
+  const handleSaveEntry = () => {
+    console.log('Saving observation entry:', {
+      date: observationDate,
+      visualChanges,
+      height,
+      lightingNotes,
+      humidity,
+    });
+    // Implement saving logic here (e.g., store in state or API)
+  };
 
   // Hardcoded previous entries for demonstration
   const previousEntries = [
@@ -35,18 +48,6 @@ const PlantInfoScreen = () => {
 
   // State for health check upload
   const [selectedImage, setSelectedImage] = useState(null);
-
-  // Function to save the observation entry
-  const handleSaveEntry = () => {
-    console.log('Saving observation entry:', {
-      date: observationDate,
-      visualChanges,
-      height,
-      lightingNotes,
-      humidity,
-    });
-    // Implement saving logic here (e.g., store in state or API)
-  };
 
   // Function to open the image picker
   const pickImage = async () => {
@@ -70,8 +71,9 @@ const PlantInfoScreen = () => {
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+      <View style={styles.headerContainer}>
+        {/* Cancel Button */}
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.cancelButton}>
           <MaterialCommunityIcons name="arrow-left" size={24} color="#DF6D14" />
           <Text style={styles.cancelText}>cancel</Text>
         </TouchableOpacity>
@@ -231,10 +233,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F5E9',
     paddingHorizontal: 16,
   },
-  header: {
+  headerContainer: {
+    flexDirection: 'row', // Ensures left alignment
+    alignItems: 'center', // Keeps items aligned vertically
+    justifyContent: 'flex-start', // Aligns children to the left
+    marginTop: 60,
+  },  
+  timePlaceholder: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#DF6D14',
+    marginBottom: 8,
+  },
+  cancelButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 24,
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    elevation: 3, // Adds shadow for Android
+    shadowColor: '#000', // Adds shadow for iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   cancelText: {
     fontSize: 16,
