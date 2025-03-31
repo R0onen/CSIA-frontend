@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useNavigation, useRoute } from '@react-navigation/native'; // Import useNavigation
+import { useNavigation, useRoute } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
 
 const PlantInfoScreen = () => {
-  const navigation = useNavigation(); // Use the useNavigation hook to get the navigation object
+  const navigation = useNavigation();
   const route = useRoute();
-  const { plant } = route.params; // Get the plant data passed from JournalScreen
+  const { plant } = route.params;
 
   // State for observation entry fields
   const [observationDate, setObservationDate] = useState('');
@@ -16,6 +26,29 @@ const PlantInfoScreen = () => {
   const [height, setHeight] = useState('');
   const [lightingNotes, setLightingNotes] = useState('');
   const [humidity, setHumidity] = useState('');
+
+  // Hardcoded previous entries for demonstration
+  const previousEntries = [
+    {
+      date: 'March 27',
+      details:
+        'Sprouts doubled in size. Watered in morning.\nLight: windowsill, 12 hrs\nHumidity: 58%',
+      image: require('../assets/basil.png'),
+    },
+    {
+      date: 'April 5',
+      details:
+        'Leaves started unfolding. Fertilized.\nLight: balcony, 8 hrs\nHumidity: 60%',
+      image: require('../assets/hydrangea.png'),
+    },
+  ];
+
+  // State for selected date in Compare Growth section
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  // State for health check upload
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [predictionResult, setPredictionResult] = useState(null);
 
   // Function to save the observation entry
   const handleSaveEntry = () => {
@@ -29,30 +62,19 @@ const PlantInfoScreen = () => {
     // Implement saving logic here (e.g., store in state or API)
   };
 
-  // Hardcoded previous entries for demonstration
-  const previousEntries = [
-    {
-      date: 'March 27',
-      details: 'Sprouts doubled in size. Watered in morning.\nLight: windowsill, 12 hrs\nHumidity: 58%',
-      image: require('../assets/basil.png'), // Adjusted path
-    },
-    {
-      date: 'April 5',
-      details: 'Leaves started unfolding. Fertilized.\nLight: balcony, 8 hrs\nHumidity: 60%',
-      image: require('../assets/hydrangea.png'), // Adjusted path
-    },
-  ];
-
-  // State for selected date in Compare Growth section
-  const [selectedDate, setSelectedDate] = useState(new Date());
-
-  // State for health check upload
-  const [selectedImage, setSelectedImage] = useState(null);
-
-  // Function to open the image picker
+  // Function to open the image picker and send the image to the backend API
   const pickImage = async () => {
-    await ImagePicker.requestMediaLibraryPermissionsAsync();
+    // Request permission to access the media library
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permission Required',
+        'Sorry, we need camera roll permissions to make this work!'
+      );
+      return;
+    }
 
+    // Launch the image picker
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -62,6 +84,50 @@ const PlantInfoScreen = () => {
 
     if (!result.cancelled) {
       setSelectedImage(result.uri);
+
+      // Send the image to the backend API
+      const formData = new FormData();
+      formData.append('file', {
+        uri: result.uri,
+        name: 'plant_image.jpg',
+        type: 'image/jpeg',
+      });
+
+      try {
+        const apiResponse = await axios.post(
+          'http://localhost:4567/api/predict', // Replace with your machine's IP if testing on a physical device
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+
+        // Handle the API response
+        const { prediction } = apiResponse.data;
+        setPredictionResult(prediction);
+      } catch (error) {
+        console.error('Error uploading image:', error);
+
+        // Enhanced error handling
+        if (error.response) {
+          Alert.alert(
+            'Upload Failed',
+            `Server Error: ${error.response.status} - ${error.response.data.message || 'Unknown error'}`
+          );
+        } else if (error.request) {
+          Alert.alert(
+            'Upload Failed',
+            'No response from the server. Check your internet connection.'
+          );
+        } else {
+          Alert.alert(
+            'Upload Failed',
+            'An unexpected error occurred. Please try again later.'
+          );
+        }
+      }
     }
   };
 
@@ -88,19 +154,31 @@ const PlantInfoScreen = () => {
           style={[styles.navButton, activeTab === 'info' && styles.activeNavButton]}
           onPress={() => setActiveTab('info')}
         >
-          <MaterialCommunityIcons name="information" size={24} color={activeTab === 'info' ? '#FFFFFF' : '#DF6D14'} />
+          <MaterialCommunityIcons
+            name="information"
+            size={24}
+            color={activeTab === 'info' ? '#FFFFFF' : '#DF6D14'}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.navButton, activeTab === 'chart' && styles.activeNavButton]}
           onPress={() => setActiveTab('chart')}
         >
-          <MaterialCommunityIcons name="chart-line" size={24} color={activeTab === 'chart' ? '#FFFFFF' : '#DF6D14'} />
+          <MaterialCommunityIcons
+            name="chart-line"
+            size={24}
+            color={activeTab === 'chart' ? '#FFFFFF' : '#DF6D14'}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.navButton, activeTab === 'file' && styles.activeNavButton]}
           onPress={() => setActiveTab('file')}
         >
-          <MaterialCommunityIcons name="file-document" size={24} color={activeTab === 'file' ? '#FFFFFF' : '#DF6D14'} />
+          <MaterialCommunityIcons
+            name="file-document"
+            size={24}
+            color={activeTab === 'file' ? '#FFFFFF' : '#DF6D14'}
+          />
         </TouchableOpacity>
       </View>
 
@@ -111,9 +189,16 @@ const PlantInfoScreen = () => {
           <View style={styles.detailsContainer}>
             <Text style={styles.plantName}>{plant.plantName}</Text>
             <Text style={styles.plantDetails}>Sown on: {plant.sowingDate}</Text>
-            <Text style={styles.plantDetails}>Expected Harvest: {plant.harvestDate} ({plant.daysUntilHarvest} days later)</Text>
+            <Text style={styles.plantDetails}>
+              Expected Harvest: {plant.harvestDate} ({plant.daysUntilHarvest} days later)
+            </Text>
             <View style={styles.progressBar}>
-              <View style={[styles.progressFill, { width: `${(100 - plant.daysUntilHarvest / 365 * 100)}%` }]}></View>
+              <View
+                style={[
+                  styles.progressFill,
+                  { width: `${(100 - plant.daysUntilHarvest / 365 * 100)}%` },
+                ]}
+              ></View>
             </View>
             <Text style={styles.progressText}>76% to harvest</Text>
           </View>
@@ -178,10 +263,20 @@ const PlantInfoScreen = () => {
             <Text style={styles.sectionTitle}>Compare Growth</Text>
             <View style={styles.compareGrowthContent}>
               <Text style={styles.subsectionTitle}>Newest</Text>
-              <Image source={require('../assets/newest_growth.png')} style={styles.growthImage} /> {/* Adjusted path */}
+              <Image
+                source={require('../assets/newest_growth.png')}
+                style={styles.growthImage}
+              />
             </View>
             <View style={styles.compareGrowthContent}>
               <Text style={styles.subsectionTitle}>Selected date</Text>
+              <Text style={styles.selectedDateText}>
+                {selectedDate.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </Text>
               <DateTimePicker
                 value={selectedDate}
                 mode="date"
@@ -192,7 +287,10 @@ const PlantInfoScreen = () => {
                 }}
                 style={styles.datePicker}
               />
-              <Image source={require('../assets/selected_growth.png')} style={styles.growthImage} /> {/* Adjusted path */}
+              <Image
+                source={require('../assets/selected_growth.png')}
+                style={styles.growthImage}
+              />
             </View>
           </View>
         </>
@@ -209,7 +307,6 @@ const PlantInfoScreen = () => {
         <View style={styles.healthCheckContainer}>
           <Text style={styles.title}>Plant Health Check</Text>
           <Text style={styles.subtitle}>Please upload a picture of the plant.</Text>
-
           {/* Image Upload Area */}
           <TouchableOpacity onPress={pickImage} style={styles.uploadArea}>
             {selectedImage ? (
@@ -221,6 +318,21 @@ const PlantInfoScreen = () => {
               </>
             )}
           </TouchableOpacity>
+          {/* Display Prediction Result */}
+          {predictionResult && (
+            <View style={styles.resultContainer}>
+              <Text style={styles.resultTitle}>Prediction Result:</Text>
+              <Text style={styles.resultText}>
+                Disease: {predictionResult.name}
+              </Text>
+              <Text style={styles.resultText}>
+                Confidence: {predictionResult.confidence.toFixed(2)}%
+              </Text>
+              <Text style={styles.resultText}>
+                Description: {predictionResult.description}
+              </Text>
+            </View>
+          )}
         </View>
       )}
     </ScrollView>
@@ -234,16 +346,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   headerContainer: {
-    flexDirection: 'row', // Ensures left alignment
-    alignItems: 'center', // Keeps items aligned vertically
-    justifyContent: 'flex-start', // Aligns children to the left
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
     marginTop: 60,
-  },  
-  timePlaceholder: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#DF6D14',
-    marginBottom: 8,
   },
   cancelButton: {
     flexDirection: 'row',
@@ -253,8 +359,8 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     paddingVertical: 8,
     paddingHorizontal: 16,
-    elevation: 3, // Adds shadow for Android
-    shadowColor: '#000', // Adds shadow for iOS
+    elevation: 3,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -419,6 +525,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     marginBottom: 8,
   },
+  selectedDateText: {
+    fontSize: 16,
+    color: '#DF6D14',
+    marginTop: 8,
+  },
   chartContainer: {
     flex: 1,
     alignItems: 'center',
@@ -467,6 +578,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#8B572A',
     marginTop: 8,
+  },
+  resultContainer: {
+    backgroundColor: '#F2D6B3',
+    borderRadius: 8,
+    padding: 16,
+    width: '100%',
+  },
+  resultTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#DF6D14',
+    marginBottom: 8,
+  },
+  resultText: {
+    fontSize: 16,
+    color: '#DF6D14',
+    marginBottom: 4,
   },
 });
 
